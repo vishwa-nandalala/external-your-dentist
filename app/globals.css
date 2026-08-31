@@ -8,8 +8,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-mono: var(--font-poppins), monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +22,76 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+
+/* Scrollbar Styles - Only for individual sections */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+
+/* app/globals.css */
+
+/* Custom orange checkbox styling */
+input[type="checkbox"] {
+  accent-color: #ea580c; /* Orange-600 */
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid #d1d5db; /* Gray-300 */
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #ea580c; /* Orange-600 */
+  border-color: #ea580c;
+}
+
+input[type="checkbox"]:checked:hover {
+  background-color: #c2410c; /* Orange-700 */
+  border-color: #c2410c;
+}
+
+input[type="checkbox"]:focus {
+  ring: 2px solid #f97316; /* Orange-500 */
+  ring-offset: 2px;
+}
+
+input[type="checkbox"]:hover {
+  border-color: #f97316; /* Orange-500 */
+}
+
+/* For Webkit browsers (Chrome, Safari, Edge) */
+input[type="checkbox"]::-webkit-checkmark {
+  color: white;
+  font-weight: bold;
+}
+
+/* For Firefox */
+input[type="checkbox"]:-moz-checkmark {
+  color: white;
+  font-weight: bold;
 }
