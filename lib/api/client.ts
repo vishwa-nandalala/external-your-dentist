@@ -1,6 +1,6 @@
 // lib/api/client.ts
 
-import type { SearchResult, LocationResult, Clinic, Specialty, ClinicProfile, PractitionerProfile, ClinicAppointmentType } from "@/lib/types";
+import type { SearchResult, LocationResult, Clinic, Specialty, ClinicProfile, PractitionerProfile, ClinicAppointmentType, UnclaimedPractice } from "@/lib/types";
 
 // const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/backend";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -46,6 +46,35 @@ interface PracticeInfoResponse {
   practice_insurances?: Clinic["practice_insurances"];
   practice_opening_hours?: Clinic["practice_opening_hours"];
 }
+
+const toUnclaimedClinic = (p: UnclaimedPractice): ClinicProfile =>
+  ({
+    id: p.id,
+    practice_name: p.practice_name || "",
+    name: p.practice_name || "",
+    email: p.email || "",
+    phone: p.phone || "",
+    practice_phone: p.phone || "",
+    city: p.suburb || "",
+    suburb: p.suburb || "",
+    state: p.state || "",
+    postcode: p.postcode || "",
+    address: "",
+    logo: undefined,
+    banner_image: undefined,
+    description: "",
+    rating: 0,
+    status: "INACTIVE",
+    practice_services: [],
+    practice_team_members: [],
+    practice_insurances: [],
+    practice_facilities: [],
+    practice_galleries: [],
+    practice_achievements: [],
+    practice_certifications: [],
+    practice_opening_hours: [],
+    appointment_types: [],
+  } as unknown as ClinicProfile);
 
 const toClinic = (p: PracticeInfoResponse): Clinic => ({
   id: p.id,
@@ -152,7 +181,7 @@ n   * clinic individually via /clinic/{id} which returns the full profile.
         request<ClinicProfile>(`${FILTER_URL}/clinic/${admin.id}`).catch(() => null)
       )
     );
-
+    console.log("profiles===================>", profiles);
     return profiles.filter((p): p is ClinicProfile => p !== null);
   },
 
@@ -242,4 +271,40 @@ n   * clinic individually via /clinic/{id} which returns the full profile.
     }
     return [];
   },
+
+  getclinicProfile: async (id: string): Promise<string> => {
+    console.log("id==================>", id);
+    let vishws = "vishwasssssssssss" ;
+    return vishws;
+  },
+
+
+   getUnclaimedPracticeById: async (id: string): Promise<ClinicProfile | null> => {
+    try {
+      const data = await request<UnclaimedPractice>(
+        `${FILTER_URL}/unclaimed/${id}`
+      );
+      if (!data || !data.id) return null;
+      return toUnclaimedClinic(data);
+    } catch (error) {
+      console.warn(`Unclaimed practice not found for id=${id}:`, error);
+      return null;
+    }
+  },
+
+  /**
+   * Get all unclaimed practices (mapped to ClinicProfile shape)
+   */
+  getAllUnclaimedPractices: async (): Promise<ClinicProfile[]> => {
+    try {
+      const data = await request<UnclaimedPractice[]>(
+        `${FILTER_URL}/unclaimed`
+      );
+      return (Array.isArray(data) ? data : []).map(toUnclaimedClinic);
+    } catch (error) {
+      console.warn("Failed to fetch unclaimed practices:", error);
+      return [];
+    }
+  },
+  
 };

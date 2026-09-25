@@ -192,6 +192,7 @@ export interface Clinic {
 
 // ==================== CLINIC PROFILE (full detail) ====================
 export interface ClinicProfile {
+  updated_at: any;
   id: string;
   practice_name: string | null;
   address: string | null;
@@ -287,4 +288,30 @@ export interface FilterOptions {
   genders: string[];
   insurances: string[];
   availableDays: string[];
+}
+
+export interface UnclaimedPractice {
+  id: string;
+  practice_name: string;
+  email: string;
+  phone: string;
+  suburb: string;
+  state: string;
+  postcode: string;
+}
+
+export interface SpecialtyImage {
+  url: string;
+  name: string;
+  path: string;
+  size: number;
+  file_id: string;
+  mime_type: string;
+}
+
+export interface Specialty {
+  id: string;
+  service_name: string;
+  image_url?: { url: string; name?: string }[] | null;
+  // image_url?: SpecialtyImage[] | null;
 }

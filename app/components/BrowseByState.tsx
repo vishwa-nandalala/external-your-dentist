@@ -21,7 +21,6 @@ const stateNames: Record<string, string> = {
   SA: "South Australia",
   WA: "Western Australia",
   TAS: "Tasmania",
-  NT: "Northern Territory",
 };
 
 // Resolve a state value ("NSW", "nsw", "New South Wales", ...) to a state code
