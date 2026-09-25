@@ -114,7 +114,400 @@ const TeamMemberCard = ({
   );
 };
 
+function SimpleClinicProfile({ clinic }: { clinic: ClinicProfile }) {
+  const router = useRouter();
+  const clinicLogo = clinic.logo?.url;
+  const [filters, setFilters] = useState({ city: '', state: '', postcode: '' });
+  const getAddress = () => {
+    const parts = [];
+    if (clinic.address) parts.push(clinic.address);
+    if (clinic.city) parts.push(clinic.city);
+    if (clinic.state) parts.push(clinic.state);
+    if (clinic.postcode) parts.push(clinic.postcode);
+    return parts.join(", ");
+  };
+
+  const handleClaimProfile = () => {
+    const practiceId = clinic?.id || "";
+
+    const reactAppUrl =
+      process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+
+    const signupUrl = `${reactAppUrl}/practice/signup?practiceId=${encodeURIComponent(
+      practiceId
+    )}`;
+
+    window.open(signupUrl, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Navbar />
+
+      {/* Main Container */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-8 lg:gap-10">
+
+          {/* LEFT SIDE - CLINIC INFORMATION */}
+          <div className="min-w-0">
+
+            {/* Back Button */}
+            <button
+              onClick={() => {
+                if (
+                  typeof window !== "undefined" &&
+                  window.history.length > 1
+                ) {
+                  router.back();
+                } else {
+                  const reactAppUrl =
+                    process.env.NEXT_PUBLIC_REACT_APP_URL ||
+                    "http://localhost:5173";
+
+                  window.location.href = reactAppUrl;
+                }
+              }}
+              className="text-gray-600 hover:text-gray-900 flex items-center gap-2 text-sm mb-6 transition-colors"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+
+              Return
+            </button>
+
+            {/* PRACTICE HEADER */}
+            <div className="pb-6 border-b border-gray-200">
+
+              <div className="flex items-center gap-4">
+
+                {/* Clinic Logo */}
+                {clinicLogo ? (
+                  <img
+                    src={clinicLogo}
+                    alt={clinic.practice_name || "Clinic"}
+                    className="w-16 h-16 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-lg bg-orange-500 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                    {clinic.practice_name?.charAt(0) || "C"}
+                  </div>
+                )}
+
+                {/* Clinic Details */}
+                <div className="min-w-0">
+
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                    {clinic.practice_name || "Clinic Name"}
+                  </h1>
+
+                  <p className="text-gray-600 text-sm mt-1">
+                    {getAddress() || "Practice address unavailable"}
+                  </p>
+
+                  {/* Profile Status */}
+                  <span className="inline-flex items-center gap-1 mt-2 px-3 py-1 rounded-md text-xs font-medium bg-orange-100 text-orange-800">
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                      />
+                    </svg>
+
+                    This practice profile is not active yet
+                  </span>
+
+                </div>
+              </div>
+            </div>
+
+            {/* APPOINTMENT NOTICE */}
+            <div className="mt-5 flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-md px-4 py-3">
+              <svg
+                className="w-5 h-5 text-amber-600 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                />
+              </svg>
+
+              <p className="text-sm text-amber-700">
+                Appointment availability is currently not available for this practice.
+              </p>
+            </div>
+
+            {/* PRACTICE INFORMATION */}
+            <section className="mt-8">
+
+              <div className="flex items-center justify-between gap-4 mb-5">
+
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Practice overview
+                </h2>
+
+                <button
+                  onClick={handleClaimProfile}
+                  className="text-sm text-[#256b75] hover:underline whitespace-nowrap"
+                >
+                  Manage this practice? Update information ↗
+                </button>
+
+              </div>
+
+              {/* Contact Details */}
+              <div className="border-t border-b border-gray-200 py-6">
+
+                <h3 className="text-sm font-semibold text-gray-900 mb-5">
+                  Practice contact information
+                </h3>
+
+                <div className="space-y-5">
+
+                  {/* Address */}
+                  <div className="flex items-start gap-3">
+
+                    <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <svg
+                        className="w-4 h-4 text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-800">
+                        {getAddress() || "Practice address unavailable"}
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* Phone */}
+                  {clinic.practice_phone && (
+                    <div className="flex items-center gap-3">
+
+                      <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <svg
+                          className="w-4 h-4 text-gray-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 00-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                          />
+                        </svg>
+                      </div>
+
+                      <p className="text-sm text-[#256b75]">
+                        {clinic.practice_phone}
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* Email */}
+                  {clinic.email && (
+                    <div className="flex items-center gap-3">
+
+                      <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <svg
+                          className="w-4 h-4 text-gray-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+
+                      <p className="text-sm text-[#256b75]">
+                        {clinic.email}
+                      </p>
+
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+
+            </section>
+
+          </div>
+
+          {/* RIGHT SIDEBAR */}
+          <aside className="lg:sticky lg:top-6 h-fit">
+
+            <div className="bg-white border border-gray-200 rounded-xl shadow-md p-4 sm:p-5">
+
+              {/* ACTIVATE PROFILE */}
+              <div className="text-center">
+
+                {/* Shield */}
+                <div className="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
+
+                  <svg
+                    className="w-7 h-7 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4z"
+                    />
+
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4"
+                    />
+                  </svg>
+
+                </div>
+
+                <h3 className="text-lg font-medium text-gray-900 leading-7">
+                  Are you associated with this practice?
+                </h3>
+
+                <p className="text-sm text-gray-600 leading-6 mt-5">
+                  Activate your profile to manage details, hours, and online bookings.
+                </p>
+
+                {/* Activate Button */}
+                <button
+                  onClick={handleClaimProfile}
+                  className="w-full mt-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-full transition-all"
+                >
+                  Activate your profile
+                </button>
+                
+
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-4" />
+
+              {/* EXPLORE OTHER PRACTICES */}
+              <div className="text-center">
+
+                <h3 className="text-lg font-medium text-gray-900">
+                  Explore other practices
+                </h3>
+
+                <p className="text-sm text-gray-600 leading-6 mt-4">
+                  No appointments are currently available. Explore nearby practices instead.
+                </p>
+
+                <button
+                  className="w-full mt-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-full transition-colors"
+                  onClick={() => {
+                    const stateMap: Record<string, string> = {
+                      'NT': 'Northern Territory',
+                      'NSW': 'New South Wales',
+                      'VIC': 'Victoria',
+                      'QLD': 'Queensland',
+                      'SA': 'South Australia',
+                      'WA': 'Western Australia',
+                      'TAS': 'Tasmania',
+                      'ACT': 'Australian Capital Territory',
+                    };
+
+                    const params = new URLSearchParams();
+                    if (clinic.city) params.set('city', clinic.city);
+                    if (clinic.state) {
+                      const fullState = stateMap[clinic.state] || clinic.state;
+                      params.set('state', fullState);
+                    }
+                    if (clinic.postcode) params.set('postcode', clinic.postcode);
+                    const qs = params.toString();
+
+                    router.push(qs ? `/?${qs}` : '/');
+                  }}
+                >
+                  Explore nearby practices
+                </button>
+
+
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+
+  );
+}
+
+// ============================================================
+// MAIN COMPONENT - Conditionally renders based on status
+// ============================================================
 export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile }) {
+  const isActive = clinic.status === "ACTIVE";
+
+  // If NOT ACTIVE, show the simple UI (like the screenshot)
+  if (!isActive) {
+    return <SimpleClinicProfile clinic={clinic} />;
+  }
+
+  // ============================================================
+  // ACTIVE CLINIC - Full detailed UI (original implementation)
+  // ============================================================
   const router = useRouter();
   const [activeSection, setActiveSection] = useState("basic-info");
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -123,7 +516,6 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
   const isVerified = clinic.status === "ACTIVE";
   const hasAppointments = !!clinic.appointment_types?.length;
 
-  // Auto-select first appointment type on mount
   const [selectedAppointmentType, setSelectedAppointmentType] = useState(() => {
     if (clinic?.appointment_types?.length) return clinic.appointment_types[0].id;
     return "";
@@ -142,7 +534,6 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
     }
     practiceApi.getBookingPractitioners(clinic.id, selectedAppointmentType).then((data) => {
       setPractitioners(data);
-      // Auto-select first practitioner: try clinic team member first, then first from API
       if (data.length > 0) {
         const firstMemberId = clinic.practice_team_members?.[0]?.id;
         if (firstMemberId && data.some((p) => p.id === firstMemberId)) {
@@ -178,39 +569,130 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
     }
   }, [practitioners, selectedPractitionerId]);
 
+  // const handleBookSlot = (date: string, time: string) => {
+  //   const practitioner = clinic.practice_team_members?.find((p) => p.id === selectedPractitionerId);
+  //   const appointmentType = clinic.appointment_types?.find((a) => a.id === selectedAppointmentType);
+  //   const saved = sessionStorage.getItem("bookingState");
+  //   const parsed = saved ? JSON.parse(saved) : {};
+  //   sessionStorage.setItem("bookingState", JSON.stringify({
+  //     ...parsed,
+  //     clinicId: clinic.id,
+  //     clinicName: clinic.practice_name,
+  //     selectedAppointmentTypeId: selectedAppointmentType,
+  //     selectedAppointmentTypeName: appointmentType?.name,
+  //     selectedAppointmentTypeDuration: null,
+  //     selectedPractitioner: selectedPractitionerId,
+  //     selectedPractitionerId,
+  //     practitionerAppointmentTypes: practitioner?.practitioner_appointment_types ?? [],
+  //     practitionerData: practitioner ? {
+  //       id: practitioner.id,
+  //       first_name: practitioner.first_name,
+  //       last_name: practitioner.last_name,
+  //       image: practitioner.image ?? null,
+  //     } : null,
+  //     selectedPatientType: null,
+  //     selectedFamilyMemberId: null,
+  //     selectedDate: date,
+  //     selectedDateStr: date,
+  //     selectedTime: time,
+  //     fromHomeWidget: false,
+  //     clinic,
+  //     source: "clinic",
+  //     isAuthenticated: false,
+  //   }));
+  //   const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+  //   window.location.href = `${reactAppUrl}/booking/${clinic.id}/step-1`;
+  // };
+
   const handleBookSlot = (date: string, time: string) => {
-    const practitioner = clinic.practice_team_members?.find((p) => p.id === selectedPractitionerId);
-    const appointmentType = clinic.appointment_types?.find((a) => a.id === selectedAppointmentType);
-    const saved = sessionStorage.getItem("bookingState");
-    const parsed = saved ? JSON.parse(saved) : {};
-    sessionStorage.setItem("bookingState", JSON.stringify({
-      ...parsed,
-      clinicId: clinic.id,
-      clinicName: clinic.practice_name,
+    const practitioner = clinic.practice_team_members?.find(
+      (p) => p.id === selectedPractitionerId
+    );
+    const appointmentType = clinic.appointment_types?.find(
+      (a) => a.id === selectedAppointmentType
+    );
+
+    // Reset any stale booking state first (like home page does)
+    // If you're using Redux, dispatch(resetSelections()) here.
+    // If sessionStorage-based, clear it:
+    sessionStorage.removeItem("bookingState");
+
+    const clinicImage =
+      typeof clinic.logo === "string" ? clinic.logo : clinic.logo?.url || "";
+
+    const clinicAddress =
+      [clinic.address, clinic.city, clinic.state, clinic.postcode]
+        .filter(Boolean)
+        .join(", ");
+
+    const bookingState = {
+      // Clinic identity — use both keys, matching home page
+      clinicId: String(clinic.id),
+      practiceId: String(clinic.id),
+      clinicName: clinic.practice_name || "",
+      clinicAddress,
+      clinicImage,
+
+      // Appointment selection
       selectedAppointmentTypeId: selectedAppointmentType,
-      selectedAppointmentTypeName: appointmentType?.name,
+      selectedAppointmentTypeName: appointmentType?.name ?? "",
       selectedAppointmentTypeDuration: null,
+
+      // Practitioner
       selectedPractitioner: selectedPractitionerId,
       selectedPractitionerId,
-      practitionerAppointmentTypes: practitioner?.practitioner_appointment_types ?? [],
-      practitionerData: practitioner ? {
-        id: practitioner.id,
-        first_name: practitioner.first_name,
-        last_name: practitioner.last_name,
-        image: practitioner.image ?? null,
-      } : null,
-      selectedPatientType: null,
-      selectedFamilyMemberId: null,
+      practitionerAppointmentTypes:
+        practitioner?.practitioner_appointment_types ?? [],
+      practitionerData: practitioner
+        ? {
+          id: practitioner.id,
+          first_name: practitioner.first_name,
+          last_name: practitioner.last_name,
+          image: practitioner.image ?? null,
+        }
+        : null,
+
+      // Date/time
       selectedDate: date,
       selectedDateStr: date,
       selectedTime: time,
+
+      // Flags
+      selectedPatientType: null,
+      selectedFamilyMemberId: null,
       fromHomeWidget: false,
-      clinic,
       source: "clinic",
       isAuthenticated: false,
-    }));
-    const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
-    window.location.href = `${reactAppUrl}/booking/${clinic.id}/step-1`;
+
+      // Full clinic (only if booking page needs it — otherwise omit to avoid huge payload)
+      clinic,
+    };
+
+    try {
+      sessionStorage.setItem("bookingState", JSON.stringify(bookingState));
+    } catch (e) {
+      console.error("Failed to persist booking state:", e);
+    }
+
+    // ✅ Build URL params exactly like the home page does
+    const params = new URLSearchParams({
+      clinicId: String(clinic.id),
+      practiceId: String(clinic.id),
+      date,
+      time,
+      fromHomeWidget: "false",
+      source: "clinic",
+      clinicName: clinic.practice_name || "",
+      clinicAddress,
+      clinicImage,
+      practitionerId: selectedPractitionerId || "",
+      appointmentTypeId: selectedAppointmentType || "",
+    });
+
+    const reactAppUrl =
+      process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+
+    window.location.href = `${reactAppUrl}/booking/${clinic.id}/step-1?${params.toString()}`;
   };
 
   const galleryImages = useMemo(() => {
@@ -305,49 +787,42 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
 
           <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 left-0 w-full px-4 sm:px-6 md:px-8 lg:px-16">
             <div className="max-w-7xl mx-auto flex justify-start">
-              <div className="bg-black/60 backdrop-blur-sm px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6 rounded-xl shadow-2xl w-full sm:w-auto sm:max-w-2xl">                    <div className="flex flex-col items-start gap-3">
-                      <div className="flex items-start gap-2">
-                        {clinicLogo ? (
-                          <img
-                            src={clinicLogo}
-                            alt={clinic.practice_name || "Clinic"}
-                            className="w-14 h-14 rounded-full object-cover border-2 border-white flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl border-2 border-white flex-shrink-0">
-                            {clinic.practice_name?.charAt(0) || "C"}
-                          </div>
-                        )}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
-                              {clinic.practice_name || "Clinic Name"}
-                            </h1>
-                            {!isVerified && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-400/90 text-yellow-900">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                </svg>
-                                Not Verified
-                              </span>
-                            )}
-                            {isVerified && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-400/90 text-green-900">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                Verified
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm md:text-base text-gray-200 mt-1">
-                            {[clinic.city, clinic.state, clinic.postcode]
-                              .filter(Boolean)
-                              .join(", ")}
-                          </p>
-                        </div>
+              <div className="bg-black/60 backdrop-blur-sm px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6 rounded-xl shadow-2xl w-full sm:w-auto sm:max-w-2xl">
+                <div className="flex flex-col items-start gap-3">
+                  <div className="flex items-start gap-2">
+                    {clinicLogo ? (
+                      <img
+                        src={clinicLogo}
+                        alt={clinic.practice_name || "Clinic"}
+                        className="w-14 h-14 rounded-full object-cover border-2 border-white flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl border-2 border-white flex-shrink-0">
+                        {clinic.practice_name?.charAt(0) || "C"}
                       </div>
+                    )}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
+                          {clinic.practice_name || "Clinic Name"}
+                        </h1>
+                        {isVerified && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-400/90 text-green-900">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Verified
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm md:text-base text-gray-200 mt-1">
+                        {[clinic.city, clinic.state, clinic.postcode]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </p>
                     </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -357,7 +832,6 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
               if (typeof window !== "undefined" && window.history.length > 1) {
                 router.back();
               } else {
-                // Fall back to React app home (Next.js pages are SEO-only mirrors)
                 const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
                 window.location.href = reactAppUrl;
               }
@@ -385,7 +859,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                     activeSection === link.id
                       ? "bg-orange-500 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-orange-100 hover:text-orange-600 hover:shadow-md"
-                  }`}
+                      }`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={link.icon} />
@@ -463,7 +937,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                         <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        Our Teamsss
+                        Our Team
                       </h2>
                       <span className="bg-orange-100 text-orange-600 text-xs sm:text-sm font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full mb-1">
                         {clinic.practice_team_members.length} Member{clinic.practice_team_members.length !== 1 ? "s" : ""}
@@ -561,7 +1035,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                         {clinic.practice_achievements?.map((ach) => (
                           <div
                             key={ach.id}
-                            className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-xl border border-yellow-100 hover:shadow-lg transition-all group"
+                            className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all group hover:border-orange-300"
                           >
                             {ach.image_url && (
                               <div className="relative mb-4">
@@ -603,7 +1077,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                         {clinic.practice_certifications?.map((cert) => (
                           <div
                             key={cert.id}
-                            className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-xl border border-orange-200 hover:shadow-lg transition-all group"
+                            className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all group hover:border-orange-300"
                           >
                             {cert.image_url && (
                               <div className="relative mb-4">
@@ -763,9 +1237,8 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                       {openingHours.map(({ day, time, isClosed }) => (
                         <div
                           key={day}
-                          className={`flex justify-between items-center px-4 py-3 rounded-lg ${
-                            isClosed ? "bg-red-50 text-red-600" : "bg-green-50 text-gray-700"
-                          }`}
+                          className={`flex justify-between items-center px-4 py-3 rounded-lg ${isClosed ? "bg-red-50 text-red-600" : "bg-green-50 text-gray-700"
+                            }`}
                         >
                           <span className="font-semibold capitalize">{day}</span>
                           <span className={isClosed ? "font-bold" : "font-medium text-green-700"}>
@@ -890,7 +1363,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                           }}
                           className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-orange-600 transition-colors appearance-none cursor-pointer hover:border-gray-300 text-gray-700 text-sm sm:text-base"
                         >
-                          <option value="" disabled>Select Appointment type</option>
+                          {/* <option value="" disabled>Select Appointment type</option> */}
                           {clinic.appointment_types?.map((type) => (
                             <option key={type.id} value={type.id}>{type.name}</option>
                           ))}
@@ -906,7 +1379,7 @@ export default function ClinicProfileClient({ clinic }: { clinic: ClinicProfile 
                           onChange={(e) => setSelectedPractitionerId(e.target.value)}
                           className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-200 bg-white focus:outline-none focus:border-orange-600 transition-colors appearance-none cursor-pointer hover:border-gray-300 text-gray-700 text-sm sm:text-base"
                         >
-                          <option value="">All Practitioner</option>
+                          {/* <option value="">All Practitioner</option> */}
                           {practitioners.map((p) => (
                             <option key={p.id} value={p.id}>{`${p.first_name} ${p.last_name || ""}`}</option>
                           ))}

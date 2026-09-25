@@ -87,15 +87,83 @@ export const metadata: Metadata = {
     "Find trusted dentists and dental clinics near you. Compare dentists, explore dental services, and book your dental appointment easily.",
 
   keywords: [
+    // General Dentist Search
     "dentist",
-    "dentist near me",
     "find dentist",
+    "search dentist",
+    "dentist near me",
+    "best dentist",
+    "top dentist",
+    "trusted dentist",
+    "experienced dentist",
+    "local dentist",
+    "nearby dentist",
+
+    // Dental Clinics
     "dental clinic",
     "dental clinic near me",
+    "best dental clinic",
+    "dental hospital",
+    "dental care clinic",
+    "nearby dental clinic",
+    "trusted dental clinic",
+
+    // Appointments
     "book dentist appointment",
-    "dental appointment",
+    "book dental appointment",
+    "dentist appointment",
+    "online dentist booking",
+    "online dental appointment",
+    "schedule dentist appointment",
+    "dentist appointment booking",
+    "dental appointment online",
+
+    // Dental Services
     "dental care",
+    "dental treatment",
+    "teeth cleaning",
+    "dental checkup",
+    "oral health",
+    "preventive dental care",
+    "professional dental care",
+
+    // Popular Dental Treatments
+    "teeth whitening",
+    "root canal treatment",
+    "dental implants",
+    "dental braces",
+    "orthodontic treatment",
+    "tooth extraction",
+    "wisdom tooth removal",
+    "dental crown",
+    "dental bridge",
+    "dental filling",
+    "dentures",
+
+    // Dental Specialists
+    "general dentist",
+    "cosmetic dentist",
+    "orthodontist",
+    "endodontist",
+    "periodontist",
+    "pediatric dentist",
+    "oral surgeon",
+    "dental specialist",
+
+    // Trust & Discovery
     "trusted dentists",
+    "verified dentists",
+    "find dental clinic",
+    "compare dentists",
+    "dentist reviews",
+    "dentist ratings",
+    "best dental care",
+
+    // Australia-focused SEO
+    "dentist in Australia",
+    "dental clinic in Australia",
+    "find dentist in Australia",
+    "book dentist appointment online Australia",
   ],
 
   robots: {
