@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { practiceApi } from "@/lib/api/client";
 import type {
   ClinicProfile,
@@ -157,10 +156,10 @@ export default function AvailableSlots({
 
       let buttonClass =
         "h-8 w-8 lg:h-10 lg:w-10 rounded-full flex items-center justify-center text-xs lg:text-sm transition-colors ";
-      if (isSelected) buttonClass += "bg-orange-600 text-white font-bold";
-      else if (isPast) buttonClass += "text-gray-300 cursor-not-allowed";
-      else if (isAvailable) buttonClass += "text-gray-700 font-bold hover:bg-orange-100 cursor-pointer";
-      else buttonClass += "text-gray-400";
+      if (isSelected) buttonClass += "bg-[#19A7A0] text-white font-bold shadow-sm";
+      else if (isPast) buttonClass += "text-[#8AA0AE]/50 cursor-not-allowed";
+      else if (isAvailable) buttonClass += "text-[#163A5F] font-bold hover:bg-[#E8F8F7] hover:text-[#19A7A0] cursor-pointer";
+      else buttonClass += "text-[#8AA0AE]";
 
       days.push(
         <button
@@ -183,124 +182,146 @@ export default function AvailableSlots({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-[#163A5F]/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
-      <div className="relative bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      {/* Main Modal */}
+      <div className="relative bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#DDEEEE]">
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md"
+          className="absolute top-4 right-4 z-10 bg-[#F4FAFA] hover:bg-[#E8F8F7] text-[#5A7185] hover:text-[#19A7A0] w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md border border-[#DDEEEE]"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col xl:flex-row">
+          <div className="bg-white rounded-3xl shadow-sm border border-[#DDEEEE] overflow-hidden flex flex-col xl:flex-row">
+
             {/* LEFT: Calendar Section */}
-            <div className="w-full xl:w-[380px] border-r border-gray-100 bg-gray-50 p-6 lg:p-8">
+            <div className="w-full xl:w-[380px] border-r border-[#DDEEEE] bg-[#F4FAFA] p-6 lg:p-8">
+
+              {/* Month Header */}
               <div className="flex items-center justify-between mb-6">
-                <span className="text-lg font-bold text-gray-800">
+                <span className="text-lg font-bold text-[#163A5F]">
                   {viewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                 </span>
+
                 <div className="flex gap-2">
                   <button
                     onClick={() => changeMonth(-1)}
-                    className="h-10 w-10 rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition"
+                    className="h-10 w-10 rounded-full border border-[#DDEEEE] bg-white text-[#163A5F] hover:bg-[#E8F8F7] hover:text-[#19A7A0] transition-colors"
                   >
-                    &#9664;
+                    ◀
                   </button>
                   <button
                     onClick={() => changeMonth(1)}
-                    className="h-10 w-10 rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition"
+                    className="h-10 w-10 rounded-full border border-[#DDEEEE] bg-white text-[#163A5F] hover:bg-[#E8F8F7] hover:text-[#19A7A0] transition-colors"
                   >
-                    &#9654;
+                    ▶
                   </button>
                 </div>
               </div>
 
+              {/* Week Days */}
               <div className="grid grid-cols-7 mb-4 text-center">
                 {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
-                  <span key={idx} className="text-xs font-medium text-gray-500">
+                  <span key={idx} className="text-xs font-semibold text-[#163A5F]/50">
                     {day}
                   </span>
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 gap-y-3 place-items-center">{renderCalendar()}</div>
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-y-3 place-items-center">
+                {renderCalendar()}
+              </div>
 
-              {/* FIXED: Appointment Type and Practitioner Dropdowns */}
+              {/* Filters: Appointment Type + Practitioner */}
               <div className="space-y-4 mt-6">
+
+                {/* Appointment Type */}
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                  <label className="block text-sm font-semibold text-[#163A5F] mb-2">
                     Appointment Type
                   </label>
                   <select
                     value={selectedAppointmentType}
-                    onChange={(e) => {
-                      setSelectedAppointmentType(e.target.value);
-                    }}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-700 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition appearance-none"
+                    onChange={(e) => setSelectedAppointmentType(e.target.value)}
+                    className="w-full border border-[#DDEEEE] rounded-xl p-3 bg-white text-[#163A5F] outline-none focus:border-[#19A7A0] focus:ring-2 focus:ring-[#5ED6D0]/30 transition-colors appearance-none cursor-pointer"
                     style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2319A7A0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                       backgroundRepeat: "no-repeat",
                       backgroundPosition: "right 1rem center",
-                      backgroundSize: "1.5em 1.5em",
+                      backgroundSize: "1.25em 1.25em",
                       paddingRight: "2.5rem",
                     }}
                   >
                     {appointmentTypes.map((a) => (
-                      <option key={a.id} value={a.id} className="text-gray-700">
+                      <option key={a.id} value={a.id}>
                         {a.name}
                       </option>
                     ))}
                   </select>
                 </div>
 
+                {/* Practitioner */}
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                  <label className="block text-sm font-semibold text-[#163A5F] mb-2">
                     Practitioner
                   </label>
                   <select
                     value={selectedPractitioner}
                     onChange={(e) => setSelectedPractitioner(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-700 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition appearance-none"
+                    className="w-full border border-[#DDEEEE] rounded-xl p-3 bg-white text-[#163A5F] outline-none focus:border-[#19A7A0] focus:ring-2 focus:ring-[#5ED6D0]/30 transition-colors appearance-none cursor-pointer"
                     style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2319A7A0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                       backgroundRepeat: "no-repeat",
                       backgroundPosition: "right 1rem center",
-                      backgroundSize: "1.5em 1.5em",
+                      backgroundSize: "1.25em 1.25em",
                       paddingRight: "2.5rem",
                     }}
                   >
                     {clinicPractitioners.map((p) => (
-                      <option key={p.id} value={p.id} className="text-gray-700">
+                      <option key={p.id} value={p.id}>
                         {p.first_name} {p.last_name}
                       </option>
                     ))}
                   </select>
                 </div>
+
               </div>
             </div>
 
-            {/* RIGHT: Time Slots Section - FIXED */}
-            <div className="flex-1 p-6 lg:p-10">
+            {/* RIGHT: Time Slots Section */}
+            <div className="flex-1 p-6 lg:p-10 bg-white">
               {loading ? (
                 <div className="h-64 flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-100 border-t-orange-600" />
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#E8F8F7] border-t-[#19A7A0]" />
                 </div>
               ) : selectedDaySlots ? (
                 <>
+                  {/* Selected Date */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-[#163A5F]">
                       {new Date(selectedDaySlots.date).toLocaleDateString("en-US", {
                         weekday: "long",
                         month: "long",
                         day: "numeric",
                       })}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-1">Available slots for this date</p>
+                    <p className="text-sm text-[#163A5F]/60 mt-1">
+                      Available slots for this date
+                    </p>
                   </div>
+
+                  {/* Time Slot Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
                     {selectedDaySlots?.slots?.map((time: string) => (
                       <button
@@ -308,8 +329,8 @@ export default function AvailableSlots({
                         onClick={() => handleSlotClick(selectedDaySlots.date, time)}
                         className={`h-14 rounded-xl border-2 font-semibold text-sm transition-all duration-200 ${
                           selectedTime === time
-                            ? "border-orange-500 bg-orange-50 text-orange-700 shadow-sm"
-                            : "border-gray-200 bg-white text-gray-700 hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50"
+                            ? "border-[#19A7A0] bg-[#E8F8F7] text-[#19A7A0] shadow-sm"
+                            : "border-[#DDEEEE] bg-white text-[#163A5F] hover:border-[#19A7A0] hover:text-[#19A7A0] hover:bg-[#E8F8F7]/50"
                         }`}
                       >
                         {time}
@@ -318,11 +339,12 @@ export default function AvailableSlots({
                   </div>
                 </>
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-400">
+                <div className="h-64 flex items-center justify-center text-[#163A5F]/50">
                   No slots available for this date.
                 </div>
               )}
             </div>
+
           </div>
         </div>
       </div>
