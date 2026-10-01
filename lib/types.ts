@@ -216,6 +216,8 @@ export interface ClinicProfile {
   practice_achievements: PracticeAchievement[];
   practice_certifications: PracticeCertification[];
   practice_exceptions?: PracticeException[];
+  seo_description?: string | null;
+  seo_keywords?: string | string[] | null; 
 }
 
 // ==================== PRACTITIONER PROFILE ====================
@@ -298,6 +300,8 @@ export interface UnclaimedPractice {
   suburb: string;
   state: string;
   postcode: string;
+  seo_description?: string | null;
+  seo_keywords?: string | string[] | null; 
 }
 
 export interface SpecialtyImage {

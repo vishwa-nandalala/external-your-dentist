@@ -55,13 +55,13 @@ const blogPosts: BlogPost[] = [
 
 const BlogSection = () => {
   return (
-    <section className="py-8 sm:py-12 md:py-16 lg:py-20">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F4FAFA]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="mb-8 sm:mb-10 md:mb-12">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#163A5F] mb-3 sm:mb-4">
             Discover Our Latest Blogs!
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-2">
+          <p className="text-sm sm:text-base md:text-lg text-[#163A5F]/70 mt-2">
             Explore everything you need to know with our latest blog posts.
           </p>
         </div>
@@ -70,7 +70,7 @@ const BlogSection = () => {
           {blogPosts.map((post) => (
             <article
               key={post.id}
-              className="flex flex-col group cursor-pointer bg-white border border-gray-200 rounded-xl sm:rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
+              className="flex flex-col group cursor-pointer bg-white border border-[#DDEEEE] rounded-xl sm:rounded-2xl overflow-hidden hover:border-[#19A7A0] hover:shadow-lg transition-all duration-300"
             >
               <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden">
                 <img
@@ -80,17 +80,17 @@ const BlogSection = () => {
                 />
               </div>
               <div className="flex flex-col flex-grow p-3 sm:p-4 md:p-6">
-                <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 leading-tight mb-2 sm:mb-3">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-[#163A5F] leading-tight mb-2 sm:mb-3 group-hover:text-[#19A7A0] transition-colors duration-200">
                   {post.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3">
+                <p className="text-xs sm:text-sm text-[#163A5F]/70 mb-3 sm:mb-4 line-clamp-3">
                   {post.excerpt}
                 </p>
-                <div className="mt-auto flex justify-between items-center pt-3 sm:pt-4 border-t border-gray-100">
-                  <span className="text-xs text-gray-500">
+                <div className="mt-auto flex justify-between items-center pt-3 sm:pt-4 border-t border-[#DDEEEE]">
+                  <span className="text-xs text-[#163A5F]/60">
                     {post.date}
                   </span>
-                  <button className="flex items-center text-orange-600 hover:text-orange-600 text-xs sm:text-sm font-medium transition-colors duration-200">
+                  <button className="flex items-center text-[#163A5F] hover:text-[#19A7A0] text-xs sm:text-sm font-medium transition-colors duration-200">
                     View Details
                   </button>
                 </div>
