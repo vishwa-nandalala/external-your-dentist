@@ -192,6 +192,7 @@ export interface Clinic {
 
 // ==================== CLINIC PROFILE (full detail) ====================
 export interface ClinicProfile {
+  [x: string]: any;
   updated_at: any;
   id: string;
   practice_name: string | null;
