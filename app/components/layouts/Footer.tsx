@@ -249,10 +249,10 @@ const Footer = () => {
                 </svg>
               </div>
 
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold">
                 <span className="text-[#19A7A0]">Y</span>our
                 <span className="text-[#19A7A0]">D</span>entist
-              </h2>
+              </div>
             </div>
 
             <p className="text-[#DCEBED] text-xs sm:text-sm leading-relaxed">
@@ -263,9 +263,9 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
+            <p className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
               Quick Links
-            </h3>
+            </p>
 
             <ul className="space-y-1.5 sm:space-y-2">
               {quickLinks.map(({ label, path }) => {
@@ -290,9 +290,9 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
+            <p className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
               Contact Info
-            </h3>
+            </p>
 
             <p className="text-[#DCEBED] text-xs sm:text-sm">
               123 Dental Street, City, State 12345

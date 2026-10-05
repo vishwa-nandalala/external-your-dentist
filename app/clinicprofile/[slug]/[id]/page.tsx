@@ -6,6 +6,12 @@ import { practiceApi } from "@/lib/api/client";
 import { clinicSlug } from "@/lib/slug";
 import ClinicProfileClient from "./ClinicProfileClient";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  "https://yourdentist.com.au";
+
+const SITE_NAME = "Your Dentist";
+
 type Props = {
   params: Promise<{ slug: string; id: string }>;
 };
@@ -13,8 +19,6 @@ type Props = {
 async function loadClinic(id: string) {
   try {
     const clinic = await practiceApi.getClinicById(id);
-    console.log("clinic in the clinic -> page.tsx ======================>", clinic);
-    
     if (clinic) return clinic;
   } catch { }
 
@@ -26,31 +30,16 @@ async function loadClinic(id: string) {
   return null;
 }
 
-/**
- * Normalize seo_keywords which may come as:
- *  - string  → "dentist, dental clinic, teeth whitening"
- *  - string[] → ["dentist", "dental clinic"]
- *  - null/undefined
- */
 function normalizeKeywords(
   input?: string | string[] | null
 ): string[] | undefined {
   if (!input) return undefined;
-
-  // 1. Convert to array of raw strings
-  const raw: string[] = Array.isArray(input)
-    ? input
-    : input.split(",");
-
-  // 2. Trim + filter empty
+  const raw: string[] = Array.isArray(input) ? input : input.split(",");
   const cleaned = raw
     .map((k) => (typeof k === "string" ? k.trim() : ""))
     .filter(Boolean);
-
-  // 3. Deduplicate (case-insensitive), preserve order
   const seen = new Set<string>();
   const unique: string[] = [];
-
   for (const keyword of cleaned) {
     const key = keyword.toLowerCase();
     if (!seen.has(key)) {
@@ -58,18 +47,40 @@ function normalizeKeywords(
       unique.push(keyword);
     }
   }
-
   return unique.length ? unique : undefined;
 }
-/**
- * Build a location string that works for both ClinicProfile (city)
- * and UnclaimedPractice (suburb).
- */
+
 function buildLocation(clinic: any): string {
   const city = clinic.city || clinic.suburb;
   return [city, clinic.state, clinic.postcode].filter(Boolean).join(", ");
 }
 
+function buildHeading(clinic: any): string {
+  const name = clinic?.practice_name?.trim() || "Clinic";
+  const location = buildLocation(clinic);
+  return location ? `${name} - ${location}` : name;
+}
+
+function buildFullAddress(clinic: any): string {
+  return [
+    clinic.address,
+    clinic.city || clinic.suburb,
+    clinic.state,
+    clinic.postcode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function absoluteUrl(path: string): string {
+  if (!path) return SITE_URL;
+  if (path.startsWith("http")) return path;
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+// ============================================================
+// ✅ PERFECT METADATA
+// ============================================================
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
 
@@ -79,25 +90,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!clinic) {
       return {
         title: "Clinic Not Found",
+        description: "The clinic you're looking for could not be found.",
         robots: { index: false, follow: false },
       };
     }
 
     const name = clinic.practice_name || "Clinic";
     const location = buildLocation(clinic);
+    const title = buildHeading(clinic);
+    const canonicalPath = `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`;
+    const canonicalUrl = absoluteUrl(canonicalPath);
 
-    // ---------- TITLE ----------
-    const title = location ? `${name} - ${location}` : name;
-
-    // ---------- DESCRIPTION ----------
-    // seo_description is for META description (search engines)
-    // description is the actual clinic description (used in UI)
-    // For meta tags, prefer seo_description, then fall back to description
-    const metaDescription =
+    const description =
       clinic.seo_description?.trim() ||
-      `${name}${location ? ` in ${location}` : ""}. View clinic details, services, opening hours, and book your dental appointment online.`;
+      clinic.description?.trim()?.slice(0, 155) ||
+      `Visit ${name}${location ? ` in ${location}` : ""}. View services, opening hours, meet our team, and book your dental appointment online.`;
 
-    // ---------- KEYWORDS ----------
     const keywords =
       normalizeKeywords(clinic.seo_keywords) ??
       ([
@@ -105,87 +113,319 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         "dental clinic",
         "dentist",
         "book dental appointment",
+        "online dental booking",
         clinic.city ? `dentist in ${clinic.city}` : null,
         clinic.state ? `dental clinic in ${clinic.state}` : null,
         clinic.postcode ? `dentist ${clinic.postcode}` : null,
+        location ? `dentist near ${location}` : null,
       ].filter(Boolean) as string[]);
 
-    // ---------- IMAGE ----------
-    const image = clinic.banner_image?.url || clinic.logo?.url || undefined;
-
-    const canonicalPath = `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`;
+    // ✅ Primary image (used for OG/Twitter + JSON-LD)
+    const imageUrl = clinic.banner_image?.url || clinic.logo?.url || undefined;
+    const imageAlt = `${name}${location ? ` - ${location}` : ""}`;
 
     return {
+      // ---------- CORE ----------
       title,
-      description: metaDescription,   // 👈 meta description (for <head>)
+      description,
       keywords,
-      alternates: { canonical: canonicalPath },
-      robots: { index: true, follow: true },
+      applicationName: SITE_NAME,
+      generator: "Next.js",
+      referrer: "origin-when-cross-origin",
+      authors: [{ name: SITE_NAME, url: SITE_URL }],
+      creator: SITE_NAME,
+      publisher: SITE_NAME,
+      category: "Health & Medical",
+
+      // ---------- CANONICAL ----------
+      alternates: {
+        canonical: canonicalUrl,
+      },
+
+      // ---------- ROBOTS ----------
+      robots: {
+        index: true,
+        follow: true,
+        nocache: false,
+        googleBot: {
+          index: true,
+          follow: true,
+          noimageindex: false,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
+
+      // ---------- OPENGRAPH ----------
       openGraph: {
         type: "website",
+        locale: "en_AU",
+        url: canonicalUrl,
+        siteName: SITE_NAME,
         title,
-        description: metaDescription,
-        url: canonicalPath,
-        siteName: "Your Dentist",
-        images: image ? [{ url: image, alt: name }] : [],
+        description,
+        images: imageUrl
+          ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+              alt: imageAlt,
+            },
+          ]
+          : [],
       },
+
+      // ---------- TWITTER ----------
       twitter: {
         card: "summary_large_image",
+        site: "@yourdentist",
+        creator: "@yourdentist",
         title,
-        description: metaDescription,
-        images: image ? [image] : [],
+        description,
+        images: imageUrl ? [{ url: imageUrl, alt: imageAlt }] : [],
+      },
+
+      // ---------- ICONS ----------
+      icons: {
+        icon: "/favicon.ico",
+        shortcut: "/favicon.ico",
+        apple: "/apple-touch-icon.png",
+      },
+
+      // ---------- VERIFICATION (add real tokens later) ----------
+      // verification: {
+      //   google: "your-google-site-verification-token",
+      // },
+
+      // ---------- OTHER ----------
+      other: {
+        "og:phone_number": clinic.practice_phone || "",
+        "og:street-address": clinic.address || "",
+        "og:locality": clinic.city || clinic.suburb || "",
+        "og:region": clinic.state || "",
+        "og:postal-code": clinic.postcode || "",
+        "og:country-name": "Australia",
       },
     };
   } catch {
-    return { title: "Clinic Not Found" };
+    return {
+      title: "Clinic Not Found",
+      robots: { index: false, follow: false },
+    };
   }
 }
 
+// ============================================================
+// ✅ PERFECT JSON-LD (Dentist + LocalBusiness + Breadcrumb)
+// ============================================================
 export default async function ClinicProfilePage({ params }: Props) {
   const { id } = await params;
 
   const clinic = await loadClinic(id);
   if (!clinic) notFound();
 
-  const jsonLd = {
+  const heading = buildHeading(clinic);
+  const name = clinic.practice_name || "Clinic";
+  const location = buildLocation(clinic);
+  const fullAddress = buildFullAddress(clinic);
+  const canonicalPath = `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`;
+  const canonicalUrl = absoluteUrl(canonicalPath);
+  const imageUrl = clinic.banner_image?.url || clinic.logo?.url || undefined;
+
+  // ---------- DENTIST / MEDICAL BUSINESS SCHEMA ----------
+  const businessSchema = {
     "@context": "https://schema.org",
-    "@type": "MedicalBusiness",
-    name: clinic.practice_name || "Clinic",
-    description: clinic.seo_description || clinic.description || undefined,
-    url: `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`,
-    image: clinic.banner_image?.url || clinic.logo?.url || undefined,
+    "@type": ["Dentist", "MedicalBusiness", "LocalBusiness"],
+    "@id": `${canonicalUrl}#business`,
+    name,
+    alternateName: heading,
+    description:
+      clinic.seo_description || clinic.description || `${name} dental clinic.`,
+    url: canonicalUrl,
+    image: imageUrl ? absoluteUrl(imageUrl) : undefined,
+    logo: clinic.logo?.url ? absoluteUrl(clinic.logo.url) : undefined,
+    telephone: clinic.practice_phone || undefined,
+    email: clinic.email || undefined,
+    priceRange: "$$",
+    currenciesAccepted: "AUD",
+    paymentAccepted: "Cash, Credit Card, Debit Card, Health Insurance",
     address: {
       "@type": "PostalAddress",
       streetAddress: clinic.address || undefined,
+      addressLocality: clinic.city || clinic.suburb || undefined,
       addressRegion: clinic.state || undefined,
       postalCode: clinic.postcode || undefined,
+      addressCountry: "AU",
     },
-    telephone: clinic.practice_phone || clinic.practice_phone || undefined,
-    email: clinic.email || undefined,
+    areaServed: {
+      "@type": "City",
+      name: clinic.city || clinic.suburb || clinic.state || "Australia",
+    },
     ...(clinic.practice_opening_hours?.length
       ? {
-        openingHoursSpecification: clinic.practice_opening_hours.map((h) => ({
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: h.day_of_week,
-          opens: h.time_slots?.[0]?.start || undefined,
-          closes: h.time_slots?.[0]?.end || undefined,
-        })),
+        openingHoursSpecification: clinic.practice_opening_hours
+          .filter((h: any) => h.is_open)
+          .map((h: any) => ({
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: h.day_of_week,
+            opens: h.time_slots?.[0]?.start || undefined,
+            closes: h.time_slots?.[0]?.end || undefined,
+          })),
       }
       : {}),
     ...(clinic.practice_services?.length
       ? {
-        medicalSpecialty: clinic.practice_services.map((s) => s.name),
+        medicalSpecialty: clinic.practice_services.map((s: any) => s.name),
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Dental Services",
+          itemListElement: clinic.practice_services.map((s: any) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "MedicalProcedure",
+              name: s.name,
+            },
+          })),
+        },
       }
       : {}),
+    ...(clinic.practice_team_members?.length
+      ? {
+        employee: clinic.practice_team_members.map((m: any) => ({
+          "@type": "Person",
+          name: `${m.first_name} ${m.last_name || ""}`.trim(),
+          jobTitle: m.qualification || "Dental Practitioner",
+          image: m.image?.url ? absoluteUrl(m.image.url) : undefined,
+          url: absoluteUrl(
+            `/dentistprofile/${clinicSlug({
+              id: m.id,
+              name: `${m.first_name} ${m.last_name || ""}`.trim(),
+            })}/${m.id}`
+          ),
+        })),
+      }
+      : {}),
+    ...(clinic.practice_insurances?.length
+      ? {
+        paymentAccepted: clinic.practice_insurances
+          .map((i: any) => i.provider_name)
+          .join(", "),
+      }
+      : {}),
+    ...(clinic.practice_base_info?.website
+      ? { sameAs: [clinic.practice_base_info.website] }
+      : {}),
+    potentialAction: {
+      "@type": "ReserveAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: canonicalUrl,
+        actionPlatform: [
+          "http://schema.org/DesktopWebPlatform",
+          "http://schema.org/MobileWebPlatform",
+        ],
+      },
+      result: {
+        "@type": "Reservation",
+        name: `Book appointment at ${name}`,
+      },
+    },
+  };
+
+  // ---------- BREADCRUMB SCHEMA ----------
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      ...(clinic.state
+        ? [
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: clinic.state,
+            item: absoluteUrl(`/?state=${encodeURIComponent(clinic.state)}`),
+          },
+        ]
+        : []),
+      ...(clinic.city || clinic.suburb
+        ? [
+          {
+            "@type": "ListItem",
+            position: clinic.state ? 3 : 2,
+            name: clinic.city || clinic.suburb,
+            item: absoluteUrl(
+              `/?city=${encodeURIComponent(clinic.city || clinic.suburb)}`
+            ),
+          },
+        ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: (clinic.state ? 1 : 0) + (clinic.city || clinic.suburb ? 1 : 0) + 2,
+        name,
+        item: canonicalUrl,
+      },
+    ],
+  };
+
+  // ---------- WEBSITE SCHEMA (Sitelinks SearchBox) ----------
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}#website`,
+    url: SITE_URL,
+    name: SITE_NAME,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
   };
 
   return (
     <>
+      {/* ✅ MULTIPLE JSON-LD BLOCKS (Google prefers this) */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}
       />
-      <ClinicProfileClient clinic={clinic} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+
+      {/* ✅ Hidden SEO content — visible to crawlers, accessible, no duplicate H1 */}
+      <div className="sr-only" aria-hidden="false">
+        <p>
+          {name}
+          {location ? ` is a dental clinic located in ${location}` : ""}.
+          {fullAddress ? ` Address: ${fullAddress}.` : ""}
+          {clinic.practice_phone ? ` Phone: ${clinic.practice_phone}.` : ""}
+          {clinic.practice_services?.length
+            ? ` Services: ${clinic.practice_services
+              .map((s: any) => s.name)
+              .join(", ")}.`
+            : ""}
+          Book your dental appointment online.
+        </p>
+      </div>
+
+      <ClinicProfileClient clinic={clinic} heading={heading} name={name} />
     </>
   );
 }
