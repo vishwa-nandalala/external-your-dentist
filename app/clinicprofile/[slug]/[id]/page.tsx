@@ -81,140 +81,163 @@ function absoluteUrl(path: string): string {
 // ============================================================
 // ✅ PERFECT METADATA
 // ============================================================
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
   const { id } = await params;
 
-  try {
-    const clinic = await loadClinic(id);
+  const clinic = await loadClinic(id);
 
-    if (!clinic) {
-      return {
-        title: "Clinic Not Found",
-        description: "The clinic you're looking for could not be found.",
-        robots: { index: false, follow: false },
-      };
-    }
-
-    const name = clinic.practice_name || "Clinic";
-    const location = buildLocation(clinic);
-    const title = buildHeading(clinic);
-    const canonicalPath = `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`;
-    const canonicalUrl = absoluteUrl(canonicalPath);
-
-    const description =
-      clinic.seo_description?.trim() ||
-      clinic.description?.trim()?.slice(0, 155) ||
-      `Visit ${name}${location ? ` in ${location}` : ""}. View services, opening hours, meet our team, and book your dental appointment online.`;
-
-    const keywords =
-      normalizeKeywords(clinic.seo_keywords) ??
-      ([
-        name,
-        "dental clinic",
-        "dentist",
-        "book dental appointment",
-        "online dental booking",
-        clinic.city ? `dentist in ${clinic.city}` : null,
-        clinic.state ? `dental clinic in ${clinic.state}` : null,
-        clinic.postcode ? `dentist ${clinic.postcode}` : null,
-        location ? `dentist near ${location}` : null,
-      ].filter(Boolean) as string[]);
-
-    // ✅ Primary image (used for OG/Twitter + JSON-LD)
-    const imageUrl = clinic.banner_image?.url || clinic.logo?.url || undefined;
-    const imageAlt = `${name}${location ? ` - ${location}` : ""}`;
-
+  if (!clinic) {
     return {
-      // ---------- CORE ----------
-      title,
-      description,
-      keywords,
-      applicationName: SITE_NAME,
-      generator: "Next.js",
-      referrer: "origin-when-cross-origin",
-      authors: [{ name: SITE_NAME, url: SITE_URL }],
-      creator: SITE_NAME,
-      publisher: SITE_NAME,
-      category: "Health & Medical",
-
-      // ---------- CANONICAL ----------
-      alternates: {
-        canonical: canonicalUrl,
-      },
-
-      // ---------- ROBOTS ----------
+      title: "Clinic Not Found",
+      description: "The clinic you're looking for could not be found.",
       robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const name = clinic.practice_name?.trim() || "Dental Clinic";
+
+  const location = buildLocation(clinic);
+
+  const title = location
+    ? `${name} - ${location}`
+    : name;
+
+  const canonicalPath =
+    `/clinicprofile/${clinicSlug(clinic)}/${clinic.id}`;
+
+  const canonicalUrl = absoluteUrl(canonicalPath);
+
+  const description =
+    clinic.seo_description?.trim() ||
+    clinic.description?.trim()?.slice(0, 155) ||
+    `Visit ${name}${location ? ` in ${location}` : ""}. View dental services, opening hours, dentist information, and book your appointment online.`;
+
+  const keywords =
+    normalizeKeywords(clinic.seo_keywords) ??
+    [
+      name,
+      "dentist",
+      "dental clinic",
+      "dental practice",
+      "dental care",
+      "book dentist",
+      "book dental appointment",
+      location ? `dentist in ${location}` : null,
+      clinic.city ? `dentist in ${clinic.city}` : null,
+      clinic.state ? `dentist in ${clinic.state}` : null,
+      clinic.postcode ? `dentist ${clinic.postcode}` : null,
+    ].filter(Boolean) as string[];
+
+  const imageUrl =
+    clinic.banner_image?.url ||
+    clinic.logo?.url ||
+    undefined;
+
+  const imageAlt =
+    location
+      ? `${name} - ${location}`
+      : name;
+
+  return {
+    title,
+    description,
+    keywords,
+
+    applicationName: SITE_NAME,
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
         index: true,
         follow: true,
-        nocache: false,
-        googleBot: {
-          index: true,
-          follow: true,
-          noimageindex: false,
-          "max-video-preview": -1,
-          "max-image-preview": "large",
-          "max-snippet": -1,
-        },
+        noimageindex: false,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+        "max-snippet": -1,
       },
+    },
 
-      // ---------- OPENGRAPH ----------
-      openGraph: {
-        type: "website",
-        locale: "en_AU",
-        url: canonicalUrl,
-        siteName: SITE_NAME,
-        title,
-        description,
-        images: imageUrl
-          ? [
+    openGraph: {
+      type: "website",
+      locale: "en_AU",
+
+      url: canonicalUrl,
+
+      siteName: SITE_NAME,
+
+      // Current clinic name
+      title,
+
+      // Current clinic SEO description
+      description,
+
+      images: imageUrl
+        ? [
             {
-              url: imageUrl,
+              url: absoluteUrl(imageUrl),
               width: 1200,
               height: 630,
               alt: imageAlt,
             },
           ]
-          : [],
-      },
+        : [],
+    },
 
-      // ---------- TWITTER ----------
-      twitter: {
-        card: "summary_large_image",
-        site: "@yourdentist",
-        creator: "@yourdentist",
-        title,
-        description,
-        images: imageUrl ? [{ url: imageUrl, alt: imageAlt }] : [],
-      },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
 
-      // ---------- ICONS ----------
-      icons: {
-        icon: "/favicon.ico",
-        shortcut: "/favicon.ico",
-        apple: "/apple-touch-icon.png",
-      },
+      images: imageUrl
+        ? [
+            {
+              url: absoluteUrl(imageUrl),
+              alt: imageAlt,
+            },
+          ]
+        : [],
+    },
 
-      // ---------- VERIFICATION (add real tokens later) ----------
-      // verification: {
-      //   google: "your-google-site-verification-token",
-      // },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
+      apple: "/apple-touch-icon.png",
+    },
 
-      // ---------- OTHER ----------
-      other: {
-        "og:phone_number": clinic.practice_phone || "",
-        "og:street-address": clinic.address || "",
-        "og:locality": clinic.city || clinic.suburb || "",
-        "og:region": clinic.state || "",
-        "og:postal-code": clinic.postcode || "",
-        "og:country-name": "Australia",
-      },
-    };
-  } catch {
-    return {
-      title: "Clinic Not Found",
-      robots: { index: false, follow: false },
-    };
-  }
+    other: {
+      "og:phone_number":
+        clinic.practice_phone || "",
+
+      "og:street-address":
+        clinic.address || "",
+
+      "og:locality":
+        clinic.city ||
+        clinic.suburb ||
+        "",
+
+      "og:region":
+        clinic.state || "",
+
+      "og:postal-code":
+        clinic.postcode || "",
+
+      "og:country-name":
+        "Australia",
+    },
+  };
 }
 
 // ============================================================
