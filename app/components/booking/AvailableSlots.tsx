@@ -126,7 +126,7 @@ export default function AvailableSlots({
       })
     );
 
-    const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+    const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL ;
     window.location.href = `${reactAppUrl}/booking/${clinic.id}/step-1`;
   };
 

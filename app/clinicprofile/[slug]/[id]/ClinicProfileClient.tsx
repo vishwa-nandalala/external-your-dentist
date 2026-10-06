@@ -2945,7 +2945,7 @@ function SimpleClinicProfile({
   const handleClaimProfile = () => {
     const practiceId = clinic?.id || "";
     const reactAppUrl =
-      process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+      process.env.NEXT_PUBLIC_REACT_APP_URL;
     const signupUrl = `${reactAppUrl}/practice/signup?practiceId=${encodeURIComponent(
       practiceId
     )}`;
@@ -2970,9 +2970,8 @@ function SimpleClinicProfile({
                   router.back();
                 } else {
                   const reactAppUrl =
-                    process.env.NEXT_PUBLIC_REACT_APP_URL ||
-                    "http://localhost:5173";
-                  window.location.href = reactAppUrl;
+                    process.env.NEXT_PUBLIC_REACT_APP_URL;
+                  window.location.href = reactAppUrl ?? "/";
                 }
               }}
               aria-label="Go back to previous page"
@@ -3090,7 +3089,7 @@ function SimpleClinicProfile({
 
                 <div className="space-y-5">
                   {/* Address */}
-                  <div className="flex items-start gap-3">
+                  <h4 className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full bg-[#E8F8F7] flex items-center justify-center flex-shrink-0">
                       <svg
                         className="w-4 h-4 text-[#19A7A0]"
@@ -3118,7 +3117,7 @@ function SimpleClinicProfile({
                         {getAddress() || "Practice address unavailable"}
                       </p>
                     </div>
-                  </div>
+                  </h4>
 
                   {/* Phone */}
                   {clinic.practice_phone && (
@@ -3213,9 +3212,9 @@ function SimpleClinicProfile({
                   </svg>
                 </div>
 
-                <h3 className="text-lg font-medium text-[#163A5F] leading-7">
+                <div className="text-lg font-medium text-[#163A5F] leading-7">
                   Are you associated with this practice?
-                </h3>
+                </div>
 
                 <p className="text-sm text-[#5A7185] leading-6 mt-5">
                   Activate your profile to manage details, hours, and online
@@ -3234,9 +3233,9 @@ function SimpleClinicProfile({
 
               {/* EXPLORE OTHER PRACTICES */}
               <div className="text-center">
-                <h3 className="text-lg font-medium text-[#163A5F]">
+                <div className="text-lg font-medium text-[#163A5F]">
                   Explore other practices
-                </h3>
+                </div>
 
                 <p className="text-sm text-[#5A7185] leading-6 mt-4">
                   No appointments are currently available. Explore nearby
@@ -3523,7 +3522,7 @@ export default function ClinicProfileClient({
     });
 
     const reactAppUrl =
-      process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+      process.env.NEXT_PUBLIC_REACT_APP_URL ;
 
     window.location.href = `${reactAppUrl}/booking/${
       clinic.id
@@ -3647,9 +3646,8 @@ export default function ClinicProfileClient({
                 router.back();
               } else {
                 const reactAppUrl =
-                  process.env.NEXT_PUBLIC_REACT_APP_URL ||
-                  "http://localhost:5173";
-                window.location.href = reactAppUrl;
+                  process.env.NEXT_PUBLIC_REACT_APP_URL ;
+                  window.location.href = reactAppUrl ?? "/";
               }
             }}
             aria-label="Go back to previous page"

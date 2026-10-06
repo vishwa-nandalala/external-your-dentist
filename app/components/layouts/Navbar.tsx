@@ -39,14 +39,14 @@ const Navbar: React.FC = () => {
                 <Link href="/" className="flex items-center">
                     <img
                         src="/logo.svg"
-                        alt="Logo"
+                        alt="Your Dentist - home"
                         className="h-6 sm:h-11 md:h-11 w-auto"
                     />
                 </Link>
 
                 <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
                     <Link
-                        href={`${process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173"}/list-your-practice`}
+                       href={`${process.env.NEXT_PUBLIC_REACT_APP_URL}/list-your-practice`} 
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -67,7 +67,9 @@ const Navbar: React.FC = () => {
                         <UserDropdown />
                     ) : (
                         <Link
-                            href={`${process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173"}/login`}
+                            href={`${process.env.NEXT_PUBLIC_REACT_APP_URL}/login`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
                             <button className="px-3 lg:px-4 py-2 rounded-lg font-bold text-xs sm:text-sm md:text-base text-black hover:text-orange-600 transition">
                                 Login
@@ -91,7 +93,11 @@ const Navbar: React.FC = () => {
 
             {menuOpen && (
                 <div className="site-container md:hidden mt-2 sm:mt-3 space-y-2 pb-2 sm:pb-3">
-                    <Link href="/list-your-practice">
+                    <Link
+                       href={`${process.env.NEXT_PUBLIC_REACT_APP_URL}/list-your-practice`} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         <button
                             onClick={() => setMenuOpen(false)}
                             className="w-full px-4 py-2 rounded-lg font-bold text-sm text-black focus:text-orange-600 transition"
@@ -121,14 +127,15 @@ const Navbar: React.FC = () => {
                             </button>
                         </>
                     ) : (
-                        <Link href="/login">
-                            <button
-                                onClick={() => setMenuOpen(false)}
-                                className="w-full px-4 py-2 rounded-lg font-bold text-sm text-black focus:text-orange-600 transition"
+                        <Link href={`${process.env.NEXT_PUBLIC_REACT_APP_URL}/login`} >
+                        <button
+                            rel="noopener noreferrer"
+                            onClick={() => setMenuOpen(false)}
+                            className="block w-full px-4 py-2 rounded-lg font-bold text-sm text-black focus:text-orange-600 transition"
                             >
-                                Login
-                            </button>
-                        </Link>
+                                </button>
+                            Login
+                            </Link>
                     )}
                 </div>
             )}

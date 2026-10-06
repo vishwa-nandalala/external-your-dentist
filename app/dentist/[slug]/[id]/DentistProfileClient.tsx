@@ -834,7 +834,7 @@ export default function DentistProfileClient({ practitioner }: { practitioner: P
       clinic: bookingClinicData,
       fromHomeWidget: false,
     }));
-    const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
+    const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL ;
     window.location.href = `${reactAppUrl}/booking/${practiceId}/step-1`;
   };
 
@@ -964,8 +964,8 @@ export default function DentistProfileClient({ practitioner }: { practitioner: P
               } else if (typeof window !== "undefined" && window.history.length > 1) {
                 router.back();
               } else {
-                const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL || "http://localhost:5173";
-                window.location.href = reactAppUrl;
+                const reactAppUrl = process.env.NEXT_PUBLIC_REACT_APP_URL ;
+                window.location.href = reactAppUrl ?? "/";
               }
             }}
             className="absolute top-2 sm:top-3 md:top-4 left-2 sm:left-4 bg-white/90 backdrop-blur-sm hover:bg-[#E8F8F7] text-[#163A5F] hover:text-[#19A7A0] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-md transition-all flex items-center gap-2 text-xs sm:text-sm font-medium"
