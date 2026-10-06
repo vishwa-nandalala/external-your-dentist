@@ -77,10 +77,33 @@ function buildLocation(practitioner: any): string {
     .join(", ");
 }
 
+function buildAddress(practitioner: any): string {
+  const info = practitioner.practice_info;
+  if (!info) return "";
+  const parts = [
+    info.address,
+    info.suburb || info.city,
+    info.state,
+    info.postcode,
+  ].filter(Boolean);
+  return parts.join(", ");
+}
+
 function absoluteUrl(path: string): string {
   if (!path) return SITE_URL;
   if (path.startsWith("http")) return path;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function buildDescription(practitioner: any): string {
+  const name = buildFullName(practitioner) || "this dentist";
+  const practiceName =
+    practitioner.practice_info?.practice_name?.trim() || "a dental practice";
+  const address = buildAddress(practitioner);
+
+  return `Book an appointment with ${name}, Dentist at ${practiceName}, a dental practice in ${
+    address || "Australia"
+  }. See current availability and book instantly at any time.`;
 }
 
 // ============================================================
@@ -121,18 +144,9 @@ export async function generateMetadata({
 
   const canonicalUrl = absoluteUrl(canonicalPath);
 
-  // ✅ SEO description priority:
-  // 1. clinic.seo_description
-  // 2. practitioner.professional_statement (shortened)
-  // 3. auto-built
-  const description =
-    clinic?.seo_description?.trim() ||
-    practitioner.professional_statement?.trim()?.slice(0, 155) ||
-    `Meet ${name}, ${qualification}${practiceName ? ` at ${practiceName}` : ""}${location ? ` in ${location}` : ""}. View profile, specialisations, and book your dental appointment online.`;
+  // ✅ Description (always the required format)
+  const description = buildDescription(practitioner);
 
-  // ✅ SEO keywords priority:
-  // 1. clinic.seo_keywords
-  // 2. auto-built from practitioner + clinic data
   const keywords =
     normalizeKeywords(clinic?.seo_keywords) ??
     ([
@@ -235,9 +249,6 @@ export default async function DentistProfilePage({ params }: Props) {
   const practitioner = await loadPractitioner(id);
   if (!practitioner) notFound();
 
-  // ✅ Fetch clinic for SEO description fallback in schema too
-  const clinic = await loadClinicById(practitioner.practice_info?.id);
-
   const name = buildFullName(practitioner) || "Dental Practitioner";
   const practiceName = practitioner.practice_info?.practice_name || "";
   const qualification = practitioner.qualification || "Dental Practitioner";
@@ -255,10 +266,8 @@ export default async function DentistProfilePage({ params }: Props) {
     ? `${name} - ${practiceName}${location ? `, ${location}` : ""}`
     : `${name}${location ? ` - ${location}` : ""}`;
 
-  const description =
-    clinic?.seo_description?.trim() ||
-    practitioner.professional_statement ||
-    `${name}, ${qualification}${practiceName ? ` at ${practiceName}` : ""}.`;
+  // ✅ Use the same required description format here too
+  const description = buildDescription(practitioner);
 
   // ---------- DENTIST / PHYSICIAN SCHEMA ----------
   const dentistSchema = {

@@ -1568,7 +1568,7 @@
 //   "Sunday",
 // ];
 
-// const DEFAULT_LOGO = "/assets/default-service.png";
+// const DEFAULT_LOGO = "/logo.svg";
 
 // const getServiceIcon = (name: string) => {
 //   const lower = name.toLowerCase();
@@ -2807,7 +2807,7 @@ const WEEK_ORDER = [
   "Sunday",
 ];
 
-const DEFAULT_LOGO = "/assets/default-service.png";
+const DEFAULT_LOGO = "/logo.svg";
 
 const getServiceIcon = (name: string) => {
   const lower = name.toLowerCase();
@@ -3547,8 +3547,8 @@ export default function HomePage() {
                     >
                       <div
                         className={`relative w-28 h-36 md:w-32 md:h-38 rounded-2xl flex flex-col items-center justify-between p-4 transition-all duration-300 ${isSelected
-                            ? "bg-[#E8F8F7] border-2 border-[#19A7A0] shadow-xl scale-105"
-                            : "bg-white border border-[#DDEEEE] shadow-md hover:border-[#19A7A0] hover:bg-[#F8FEFE] hover:shadow-lg scale-100"
+                          ? "bg-[#E8F8F7] border-2 border-[#19A7A0] shadow-xl scale-105"
+                          : "bg-white border border-[#DDEEEE] shadow-md hover:border-[#19A7A0] hover:bg-[#F8FEFE] hover:shadow-lg scale-100"
                           }`}
                       >
                         {isSelected && (
@@ -3557,19 +3557,23 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        <img
-                          src={
-                            specialty.image_url?.[0]?.url ||
-                            "/default-service.png"
-                          }
-                          alt={specialty.service_name}
-                          className="w-14 h-14 md:w-20 md:h-20 object-contain flex-shrink-0"
-                        />
+                        {specialty.image_url?.[0]?.url ? (
+                          <img
+                            src={specialty.image_url[0].url}
+                            alt={specialty.service_name}
+                            loading="lazy"
+                            className="w-14 h-14 md:w-20 md:h-20 object-contain flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 md:w-20 md:h-20 flex items-center justify-center flex-shrink-0">
+                            {getServiceIcon(specialty.service_name)}
+                          </div>
+                        )}
 
                         <span
                           className={`text-xs md:text-sm font-medium text-center leading-snug break-words ${isSelected
-                              ? "text-[#19A7A0]"
-                              : "text-[#163A5F] hover:text-[#19A7A0]"
+                            ? "text-[#19A7A0]"
+                            : "text-[#163A5F] hover:text-[#19A7A0]"
                             } transition-colors`}
                         >
                           {specialty.service_name}
@@ -3603,9 +3607,9 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-4 lg:px-6 pt-8 sm:pt-12">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-12">
           <div className="mb-6 md:mb-0">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#163A5F] mb-2">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#163A5F] mb-2">
               Discover the top dental clinics we've found for you.
-            </h1>
+            </h2>
             <p className="text-[#163A5F] mt-2 text-lg">
               Expert-reviewed options tailored to your needs
             </p>
@@ -3622,7 +3626,7 @@ export default function HomePage() {
       </div>
 
       {/* ================= Filters + Results ================= */}
-      <div className="max-w-7xl mx-auto mt-10 px-4 lg:px-6">
+      <div id="explore" className="max-w-7xl mx-auto mt-10 px-4 lg:px-6">
         {/* Mobile Filter Toggle */}
         <div className="lg:hidden mb-4 sm:mb-6">
           <button
@@ -3911,8 +3915,7 @@ export default function HomePage() {
 
                                                     const reactAppUrl =
                                                       process.env
-                                                        .NEXT_PUBLIC_REACT_APP_URL ||
-                                                      "http://localhost:5173";
+                                                        .NEXT_PUBLIC_REACT_APP_URL;
                                                     const params =
                                                       new URLSearchParams({
                                                         clinicId: String(

@@ -115,6 +115,11 @@ const BrowseByState = () => {
                 <img
                   src={item.image}
                   alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
                   className="absolute bottom-4 right-4 w-12 sm:w-16 h-16 sm:h-25 object-contain opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-60 group-hover:scale-125 transition-all duration-300 mb-20"
                 />
               )}

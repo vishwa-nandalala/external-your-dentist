@@ -65,6 +65,8 @@ const toUnclaimedClinic = (p: UnclaimedPractice): ClinicProfile =>
     description: "",
     rating: 0,
     status: "INACTIVE",
+    seo_description: p.seo_description ?? null,
+    seo_keywords: p.seo_keywords ?? null,
     practice_services: [],
     practice_team_members: [],
     practice_insurances: [],
