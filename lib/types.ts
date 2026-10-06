@@ -238,6 +238,14 @@ export interface PractitionerProfile {
   is_visible_online: boolean | null;
   practitioner_practice_services: PractitionerPracticeService[];
   practitioner_appointment_types?: PractitionerAppointmentType[];
+
+  // ✅ ADDED — SEO & profile enrichment (optional, matches UnclaimedPractice/ClinicProfile)
+  seo_description?: string | null;
+  seo_keywords?: string | string[] | null;
+  bio?: string | null;
+  years_of_experience?: number | null;
+  specialisations?: Array<{ id?: string; name?: string } | string> | null;
+
   practice_info?: {
     id: string;
     practice_name: string | null;
