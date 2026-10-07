@@ -3858,7 +3858,7 @@ export default function ClinicProfileClient({
                     aria-labelledby="gallery-heading"
                   >
                     <div className="flex items-center justify-between mb-6 border-b-4 border-[#5ED6D0]">
-                      <h2
+                      <div
                         id="gallery-heading"
                         className="text-sm sm:text-base font-bold text-[#163A5F] uppercase tracking-widest flex items-center gap-2"
                       >
@@ -3877,7 +3877,7 @@ export default function ClinicProfileClient({
                           />
                         </svg>
                         Gallery
-                      </h2>
+                      </div>
                     </div>
                     <div className="bg-[#163A5F] p-2 sm:p-3 md:p-4 lg:p-6 rounded-lg sm:rounded-xl md:rounded-2xl">
                       <div className="relative overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl shadow-lg">
@@ -4185,12 +4185,12 @@ export default function ClinicProfileClient({
                     </div>
                     <div className="flex flex-wrap p-4 gap-3 sm:gap-4">
                       {clinic.practice_facilities?.map((fac) => (
-                        <div
+                        <h4
                           key={fac.id}
                           className="px-3 py-2 font-medium text-sm text-[#163A5F] bg-[#F4FAFA] hover:bg-[#E8F8F7] hover:text-[#19A7A0] hover:border-[#5ED6D0] rounded-full border-2 border-[#DDEEEE] transition-all"
                         >
                           {fac.facility_name}
-                        </div>
+                        </h4>
                       ))}
                     </div>
                   </section>

@@ -206,8 +206,6 @@
 // export default Footer;
 
 
-// app/components/layouts/Footer.tsx
-
 "use client";
 
 import Link from "next/link";
@@ -219,17 +217,22 @@ const Footer = () => {
 
   const quickLinks = [
     { label: "Home", path: "/" },
-    { label: "Find Dentists", path: "/find-dentists" },
-    { label: "Services", path: "/services" },
+    // { label: "Find Dentists", path: "/find-dentists" },
+    { label: "Service", path: "/service" },
     { label: "About Us", path: "/aboutus" },
     { label: "Contact", path: "/contact" },
   ];
 
+  const socialLinks = [
+    { name: "Twitter", href: "#", icon: "bi bi-twitter" },
+    { name: "Instagram", href: "#", icon: "bi bi-instagram" },
+    { name: "Facebook", href: "#", icon: "bi bi-facebook" },
+  ];
+
   return (
     <footer className="bg-[#163A5F] text-white">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-8 sm:pt-12 md:pt-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
-
           {/* Brand */}
           <div>
             <div className="flex items-center space-x-2 mb-3 sm:mb-4">
@@ -248,13 +251,11 @@ const Footer = () => {
                   />
                 </svg>
               </div>
-
               <div className="text-lg sm:text-xl md:text-2xl font-bold">
                 <span className="text-[#19A7A0]">Y</span>our
                 <span className="text-[#19A7A0]">D</span>entist
               </div>
             </div>
-
             <p className="text-[#DCEBED] text-xs sm:text-sm leading-relaxed">
               Connecting patients with trusted dental professionals for better
               oral health.
@@ -266,7 +267,6 @@ const Footer = () => {
             <p className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
               Quick Links
             </p>
-
             <ul className="space-y-1.5 sm:space-y-2">
               {quickLinks.map(({ label, path }) => {
                 const isActive = pathname === path;
@@ -293,15 +293,12 @@ const Footer = () => {
             <p className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
               Contact Info
             </p>
-
             <p className="text-[#DCEBED] text-xs sm:text-sm">
               123 Dental Street, City, State 12345
             </p>
-
             <p className="text-[#DCEBED] text-xs sm:text-sm mt-2">
               (123) 456-7890
             </p>
-
             <p className="text-[#DCEBED] text-xs sm:text-sm mt-2">
               info@yourdentist.com
             </p>
@@ -310,26 +307,16 @@ const Footer = () => {
 
         {/* Social Media */}
         <div className="flex justify-center gap-6 mb-6 sm:mb-8">
-          <a
-            className="text-[#DCEBED] hover:text-[#19A7A0] transition-colors duration-200"
-            href="#"
-          >
-            <i className="bi bi-twitter text-xl sm:text-2xl"></i>
-          </a>
-
-          <a
-            className="text-[#DCEBED] hover:text-[#19A7A0] transition-colors duration-200"
-            href="#"
-          >
-            <i className="bi bi-instagram text-xl sm:text-2xl"></i>
-          </a>
-
-          <a
-            className="text-[#DCEBED] hover:text-[#19A7A0] transition-colors duration-200"
-            href="#"
-          >
-            <i className="bi bi-facebook text-xl sm:text-2xl"></i>
-          </a>
+          {socialLinks.map(({ name, href, icon }) => (
+            <a
+              key={name}
+              aria-label={name}
+              className="text-[#DCEBED] hover:text-[#19A7A0] transition-colors duration-200"
+              href={href}
+            >
+              <i className={`${icon} text-xl sm:text-2xl`}></i>
+            </a>
+          ))}
         </div>
 
         {/* Bottom */}
@@ -337,15 +324,13 @@ const Footer = () => {
           <p className="text-[#DCEBED] text-xs sm:text-sm">
             © {currentYear} Your Dentist. All rights reserved.
           </p>
-
-          <p className="text-[#B8CDD2] text-xs mt-2">
+          <p className="text-xs mt-2">
             <Link
               href="/privacy-policy"
               className="text-[#B8CDD2] hover:text-[#19A7A0] transition-colors duration-200 mr-4"
             >
               Privacy Policy
             </Link>
-
             <Link
               href="/terms"
               className="text-[#B8CDD2] hover:text-[#19A7A0] transition-colors duration-200"

@@ -3067,6 +3067,8 @@ export default function HomePage() {
   // ✅ Search nearby location (geolocation → reverse geocode → filter)
   // ---------------------------------------------------------------
   const handleUseCurrentLocation = () => {
+
+    console.log("near me button clicked ......");
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser.");
       return;
@@ -3076,8 +3078,13 @@ export default function HomePage() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        console.log("User's position============>", position);
         try {
           const { latitude, longitude } = position.coords;
+
+        console.log("latitude ============>", latitude);
+        console.log("longitude ============>", longitude);
+
 
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`

@@ -133,10 +133,16 @@ export async function generateMetadata({
       clinic.postcode ? `dentist ${clinic.postcode}` : null,
     ].filter(Boolean) as string[];
 
-  const imageUrl =
-    clinic.banner_image?.url ||
+  const rawImageUrl =
     clinic.logo?.url ||
-    undefined;
+    clinic.banner_image?.url ||
+    "/og-default.png"; 
+
+  const imageUrl = absoluteUrl(rawImageUrl);
+  const isBanner = Boolean(clinic.banner_image?.url);
+
+  const imageWidth = isBanner ? 1200 : 512;
+  const imageHeight = isBanner ? 630 : 512;
 
   const imageAlt =
     location
@@ -182,32 +188,26 @@ export async function generateMetadata({
 
       // Current clinic SEO description
       description,
-
-      images: imageUrl
-        ? [
-            {
-              url: absoluteUrl(imageUrl),
-              width: 1200,
-              height: 630,
-              alt: imageAlt,
-            },
-          ]
-        : [],
+      images: [
+        {
+          url: imageUrl,
+          width: imageWidth,
+          height: imageHeight,
+          alt: imageAlt,
+        },
+      ],
     },
 
     twitter: {
       card: "summary_large_image",
       title,
       description,
-
-      images: imageUrl
-        ? [
-            {
-              url: absoluteUrl(imageUrl),
-              alt: imageAlt,
-            },
-          ]
-        : [],
+      images: [
+        {
+          url: imageUrl,
+          alt: imageAlt,
+        },
+      ],
     },
 
     icons: {
